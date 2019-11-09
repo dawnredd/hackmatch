@@ -5,42 +5,52 @@ import java.util.Scanner;
 
 public class Main {
 	
-	private List<Participant> participants;
-	
+
+	//a list of users that are currently recorded. 
 	private List<Participant> users;
 	
+	//a list of currently existing usernames in the database
 	private List<String> usernames;
 	
+	//we will use java's scanner class to take user input
 	Scanner scanner=new Scanner(System.in);
 	
+	//whether or not a user is currently logged in
 	private boolean isLoggedIn;
 	
-	private boolean signIn;
-	
+	//The currently logged in user
 	Participant current;
 	
+	/**
+	 * Constructor for the main class, which runs the program.
+	 **/
 	public Main()
 	{
-		participants=new ArrayList<>();
 		users=new ArrayList<Participant>();
 		isLoggedIn=false;
-		signIn=false;
 		current=null;
 		usernames=new ArrayList<String>();
 	}
 
+    /**
+     * method for adding a new user with a specified username.
+     * */
 	public void setUsername()
 	{
 		System.out.println("Creating a new user.");
+		//initializes and declares a new participant
 		Participant user=new Participant();
+		//adds that to the database of users
 		users.add(user);
+		//sets the current user to be the one that was just created.
 		current=user;
+		//while(true) loop forces the user to choose an appropriate username
 		while(true)
 		{
 		System.out.println("Please enter your username:");
-		
+		//read userinput
 		String username= scanner.nextLine();
-		
+		//if the username already exists, force the user to choose another one
 		if(usernames.contains(username))
 		{
 			System.out.println("Duplicate username. Please choose another.");
@@ -48,14 +58,20 @@ public class Main {
 		}
 		else
 		{
+		    //valid username; set the user's name to their input
 		current.setUserName(username);
+		//add it to the list of usernames
 		usernames.add(username);
+		//end the method+escape the infinite loop
 		return;
 		}
 		}
 		
 	}
 	
+	/**
+	 * method that sets the password of a newly created user
+	 * */
 	public void setPassword()
 	{
 	
@@ -75,42 +91,45 @@ public class Main {
 		
 		while(true)
 		{
-			System.out.println(usernames);
-			System.out.println(users);
-			for(int i=0;i<users.size();i++)
-			{
-				System.out.println(users.get(i).getUsername());
-			}
 
 			System.out.println("Please enter your username:");
-
+        //boolean keeps track of whether or not the user logged in successfully
 			boolean successful=false;
+			//read user input
 		String username=scanner.nextLine();
-		
+		//let the user sign up if they dont have an account
 		if(username.equalsIgnoreCase("sign up"))
 		{
 			setUsername();
 			setPassword();
 			continue;
 		}
+		//find the user that has that specific user name in the list of users
+		//note: binary search would've been more efficient here, if we had
+		//more time we would've implemented that over linear search
 		for(int i=0;i<users.size();i++)
 		{
+		    //stop at the user that has that username
 			if(users.get(i).getUsername().equals(username))
 			{
+			    						successful=true;
 				while(true)
 				{
+				   //gets the password and compares it to the user's password 
 					System.out.println("Please enter your password:");
 					String password=scanner.nextLine();
+					//if it's correct, we're logged in!
 					if(password.equals(users.get(i).getPassword()))
 					{
 						System.out.println("You have successfully logged in.");
 						isLoggedIn=true;
-						successful=true;
 						current=users.get(i);
+						//leave the infinite loop
 						break;
 					}
 					else
 					{
+					    //go back to the top if the wrong password was entered
 						System.out.println("Wrong password. Please try again");
 						continue;
 					}
@@ -128,9 +147,11 @@ public class Main {
 	
 	public void runMainMenu()
 	{
+	    //self explanatory. reads user input and performs the specific action
 		System.out.println("Welcome to HackMatch!");
 		System.out.println("Type log out to log out\nType read bio to read your profile\nType edit bio to edit your bio");
 		String match="Your current matches: \n";
+		//prints out the top 10 matches
 		for(int i=0;i<matchCurrent().length;i++)
 		{
 			match+=matchCurrent()[i]+"\n";
@@ -157,6 +178,7 @@ public class Main {
 		
 		
 	}
+	
 	
 	public void wantsToLogOut(boolean logout)
 	{
@@ -203,11 +225,17 @@ public class Main {
 		
 	}
 	
+	/**
+	 * prints out the toString representation of the current user.
+	 * */
 	public void viewBio()
 	{
 		System.out.println(current);
 	}
 	
+	/**
+	 * method that allows the user to make changes to their bio
+	 * */
 	public void editBio()
 	{
 		while(true)
@@ -227,7 +255,9 @@ public class Main {
 }
 else if(input.equals("languages"))
 {
-	//BUG
+	//there's a weird bug here that doesnt allow the user to input the
+	//programming language's name and only the number, which is odd and 
+	//likely has something to do with the scanner class 
 	while(true)
 	{
     System.out.println("Enter a programming language that you know, type \"quit\" to quit:");
